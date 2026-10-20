@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "setup-admin": "node src/scripts/setupAdmin.js"
+    "setup-admin": "node src/scripts/setupAdmin.js",
+    "seed": "node src/scripts/seed.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
