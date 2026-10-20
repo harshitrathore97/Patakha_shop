@@ -2,15 +2,13 @@ import mongoose from 'mongoose';
 
 let isConnected = false;
 
+const defaultAtlasUri = 'mongodb+srv://LeetcodeClone:himanshu9610@leetcodeclone.hxor81p.mongodb.net/patakhashop?retryWrites=true&w=majority';
+
 export const connectDB = async () => {
-  const uri = process.env.MONGODB_URI;
+  let uri = process.env.MONGODB_URI;
 
   if (!uri || uri.includes('PLACEHOLDER')) {
-    console.warn('\n⚠️  [DATABASE NOTICE]: MONGODB_URI contains placeholder credentials.');
-    console.warn('   Using built-in local JSON storage for testing & offline development.');
-    console.warn('   To connect to MongoDB Atlas, update MONGODB_URI in backend/.env\n');
-    isConnected = false;
-    return false;
+    uri = defaultAtlasUri;
   }
 
   try {

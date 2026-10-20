@@ -11,7 +11,8 @@ export const protect = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const jwtSecret = process.env.JWT_SECRET || 'patakha_jwt_secret_dev_key_2026_change_in_prod';
+    const decoded = jwt.verify(token, jwtSecret);
 
     let admin;
     if (!isDbConnected()) {

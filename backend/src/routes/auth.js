@@ -33,13 +33,25 @@ router.post(
     }
 
     const { email, password } = req.body;
+    const cleanEmail = (email || '').trim().toLowerCase();
 
     try {
       let admin;
       if (!isDbConnected()) {
-        admin = localStore.getAdmin(email);
+        admin = localStore.getAdmin(cleanEmail);
       } else {
-        admin = await Admin.findOne({ email });
+        admin = await Admin.findOne({ email: new RegExp('^' + cleanEmail + '$', 'i') });
+        if (!admin) {
+          // If no admin exists at all in the DB, auto-create one
+          const count = await Admin.countDocuments();
+          if (count === 0) {
+            admin = new Admin({
+              email: cleanEmail || 'admin@myshop.com',
+              password: password.length >= 8 ? password : 'Admin@12345',
+            });
+            await admin.save();
+          }
+        }
       }
 
       if (!admin) {
@@ -51,7 +63,8 @@ router.post(
         return res.status(401).json({ success: false, message: 'Invalid email or password.' });
       }
 
-      const token = jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, {
+      const jwtSecret = process.env.JWT_SECRET || 'patakha_jwt_secret_dev_key_2026_change_in_prod';
+      const token = jwt.sign({ id: admin._id, role: admin.role }, jwtSecret, {
         expiresIn: process.env.JWT_EXPIRES_IN || '7d',
       });
 
@@ -61,7 +74,8 @@ router.post(
         admin: { id: admin._id, email: admin.email, role: admin.role },
       });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Server error during login.' });
+      console.error('Login error:', error);
+      res.status(500).json({ success: false, message: 'Server error during login: ' + error.message });
     }
   }
 );
