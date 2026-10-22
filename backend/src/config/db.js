@@ -30,6 +30,14 @@ export const connectDB = async () => {
         const admin = new Admin({ email: defaultEmail, password: defaultPassword });
         await admin.save();
         console.log(`✨ Auto-initialized default admin account: ${defaultEmail}`);
+      } else {
+        // One-time email migration: old → new
+        const oldAdmin = await Admin.findOne({ email: /himanshusahiswm/i });
+        if (oldAdmin) {
+          oldAdmin.email = 'himanshusahuswm@gmail.com';
+          await oldAdmin.save({ validateBeforeSave: false });
+          console.log('✨ Migrated admin email to himanshusahuswm@gmail.com');
+        }
       }
 
       const configCount = await ShopConfig.countDocuments();
