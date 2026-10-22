@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 let isConnected = false;
 
 export const connectDB = async () => {
-  const uri = process.env.MONGODB_URI;
+  let uri = process.env.MONGODB_URI;
 
   if (!uri || uri.includes('PLACEHOLDER')) {
-    console.warn('\n⚠️  MONGODB_URI not configured. Using local JSON storage fallback.\n');
-    isConnected = false;
-    return false;
+    // Fallback for existing Render deployment — set MONGODB_URI env var in production!
+    uri = 'mongodb+srv://LeetcodeClone:himanshu9610@leetcodeclone.hxor81p.mongodb.net/patakhashop?retryWrites=true&w=majority';
+    console.warn('⚠️  Using fallback MongoDB URI. Set MONGODB_URI env variable in production!');
   }
 
   try {
