@@ -34,7 +34,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ onClose, whatsappNumber, shopNa
     if (!customerPhone.trim()) newErrors.phone = 'Please enter your phone number';
     else if (!/^[6-9]\d{9}$/.test(customerPhone.replace(/\s/g, '')))
       newErrors.phone = 'Enter a valid 10-digit Indian mobile number';
-    if (delivery === 'Delivery' && !address.trim())
+    const needsDeliveryAddress = delivery.toLowerCase().includes('delivery');
+    if (needsDeliveryAddress && !address.trim())
       newErrors.address = 'Please enter your delivery address';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -65,7 +66,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ onClose, whatsappNumber, shopNa
   };
 
   const generateWhatsAppMessage = () => {
-    const needsAddress = delivery === 'Delivery';
+    const needsAddress = delivery.toLowerCase().includes('delivery');
     const itemsText = validatedItems
       .map(
         (item) =>
@@ -91,7 +92,13 @@ _Please confirm availability and final amount. I understand this is a request â€
   const handleSendOnWhatsApp = () => {
     const message = generateWhatsAppMessage();
     const encoded = encodeURIComponent(message);
-    const url = `https://wa.me/${whatsappNumber}?text=${encoded}`;
+    // Sanitize the WhatsApp number â€” ensure it has country code and no special chars
+    let sanitizedNumber = whatsappNumber.replace(/[\s\-\+\(\)]/g, '');
+    // If number is 10 digits (Indian mobile without country code), prepend 91
+    if (/^[6-9]\d{9}$/.test(sanitizedNumber)) {
+      sanitizedNumber = '91' + sanitizedNumber;
+    }
+    const url = `https://wa.me/${sanitizedNumber}?text=${encoded}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     // Don't clear cart automatically â€” let user confirm after WhatsApp
     toast.success('WhatsApp opened! Press Send to complete your order request.', { duration: 5000 });
@@ -245,7 +252,7 @@ _Please confirm availability and final amount. I understand this is a request â€
                 </div>
               )}
 
-              {delivery === 'Delivery' && (
+              {delivery.toLowerCase().includes('delivery') && (
                 <div className="form-group" style={{ marginTop: '1rem' }}>
                   <label className="form-label">Delivery Address <span className="required">*</span></label>
                   <textarea

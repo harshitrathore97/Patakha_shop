@@ -128,7 +128,7 @@ const AdminSettings: React.FC = () => {
               <div>
                 <div style={{ fontWeight: 600, fontSize: 'var(--fs-sm)' }}>Store Open for Orders</div>
                 <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--gray-500)', marginTop: '2px' }}>
-                  When closed, a notice is shown in the admin dashboard.
+                  When closed, customers cannot place orders and a notice is shown.
                 </div>
               </div>
               <label className="toggle">

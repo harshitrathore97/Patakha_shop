@@ -158,26 +158,17 @@ export const localStore = {
   getAdmin: (email) => {
     const input = (email || '').toLowerCase().trim();
     const configured = (process.env.ADMIN_EMAIL || 'admin@myshop.com').toLowerCase().trim();
-    const isValidEmail =
-      !input ||
-      input === configured ||
-      input === 'admin@myshop.com' ||
-      input === 'rathorharshit72@gmail.com' ||
-      input.startsWith('admin@');
 
-    if (isValidEmail) {
+    if (input === configured) {
+      const expectedPassword = process.env.ADMIN_PASSWORD || 'Admin@12345';
+      // Hash the password synchronously for local fallback
+      const hashedPassword = bcrypt.hashSync(expectedPassword, 12);
       return {
         _id: 'admin_local_1',
-        email: input || configured,
+        email: configured,
         role: 'admin',
         comparePassword: async (pwd) => {
-          const expected = (process.env.ADMIN_PASSWORD || '').trim();
-          return (
-            pwd === 'Admin@123' ||
-            pwd === 'Admin@12345' ||
-            (expected && pwd === expected) ||
-            pwd === 'himanshu9610'
-          );
+          return bcrypt.compare(pwd, hashedPassword);
         },
       };
     }

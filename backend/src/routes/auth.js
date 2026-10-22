@@ -24,7 +24,7 @@ router.post(
   loginLimiter,
   [
     body('email').isEmail().normalizeEmail().withMessage('Valid email required'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -41,17 +41,6 @@ router.post(
         admin = localStore.getAdmin(cleanEmail);
       } else {
         admin = await Admin.findOne({ email: new RegExp('^' + cleanEmail + '$', 'i') });
-        if (!admin) {
-          // If no admin exists at all in the DB, auto-create one
-          const count = await Admin.countDocuments();
-          if (count === 0) {
-            admin = new Admin({
-              email: cleanEmail || 'admin@myshop.com',
-              password: password.length >= 8 ? password : 'Admin@12345',
-            });
-            await admin.save();
-          }
-        }
       }
 
       if (!admin) {

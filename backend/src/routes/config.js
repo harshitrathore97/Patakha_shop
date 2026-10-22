@@ -21,11 +21,26 @@ const getConfig = async () => {
   return config;
 };
 
+// Sanitize WhatsApp number to always have 91 country code
+const sanitizeWhatsApp = (num) => {
+  if (!num) return '919610684627';
+  const cleaned = String(num).replace(/[\s\-\+\(\)]/g, '');
+  // If 10 digits starting with 6-9, prepend 91
+  if (/^[6-9]\d{9}$/.test(cleaned)) return '91' + cleaned;
+  // If already 12 digits starting with 91, return as is
+  if (/^91[6-9]\d{9}$/.test(cleaned)) return cleaned;
+  // Fallback
+  return cleaned || '919610684627';
+};
+
 // GET /api/config - public shop config
 router.get('/', async (req, res) => {
   try {
     const config = await getConfig();
-    res.json({ success: true, config });
+    // Always return sanitized whatsapp number
+    const configObj = config.toJSON ? config.toJSON() : { ...config };
+    configObj.whatsappNumber = sanitizeWhatsApp(configObj.whatsappNumber);
+    res.json({ success: true, config: configObj });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch shop config.' });
   }
@@ -39,7 +54,12 @@ router.put('/', protect, async (req, res) => {
 
     for (const key of allowed) {
       if (req.body[key] !== undefined) {
-        config[key] = req.body[key];
+        // Sanitize WhatsApp number before saving
+        if (key === 'whatsappNumber') {
+          config[key] = sanitizeWhatsApp(req.body[key]);
+        } else {
+          config[key] = req.body[key];
+        }
       }
     }
 

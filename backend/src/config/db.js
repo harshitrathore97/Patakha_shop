@@ -2,13 +2,13 @@ import mongoose from 'mongoose';
 
 let isConnected = false;
 
-const defaultAtlasUri = 'mongodb+srv://LeetcodeClone:himanshu9610@leetcodeclone.hxor81p.mongodb.net/patakhashop?retryWrites=true&w=majority';
-
 export const connectDB = async () => {
-  let uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI;
 
   if (!uri || uri.includes('PLACEHOLDER')) {
-    uri = defaultAtlasUri;
+    console.warn('\n⚠️  MONGODB_URI not configured. Using local JSON storage fallback.\n');
+    isConnected = false;
+    return false;
   }
 
   try {

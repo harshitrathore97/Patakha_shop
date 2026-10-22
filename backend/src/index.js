@@ -86,6 +86,21 @@ connectDB().finally(() => {
   app.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT}`);
     console.log(`   Node ENV: ${process.env.NODE_ENV}`);
+
+    // Keep-alive self-ping for Render free tier (prevents 15-min sleep)
+    if (process.env.NODE_ENV === 'production' && process.env.RENDER_EXTERNAL_URL) {
+      const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
+      setInterval(async () => {
+        try {
+          const url = `${process.env.RENDER_EXTERNAL_URL}/api/health`;
+          await fetch(url);
+          console.log(`🏓 Keep-alive ping sent to ${url}`);
+        } catch (e) {
+          console.warn('Keep-alive ping failed:', e.message);
+        }
+      }, PING_INTERVAL);
+      console.log('   🏓 Keep-alive pinger enabled (every 14 min)');
+    }
   });
 });
 
