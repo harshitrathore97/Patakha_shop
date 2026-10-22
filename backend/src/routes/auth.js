@@ -79,4 +79,24 @@ router.post('/logout', protect, (req, res) => {
   res.json({ success: true, message: 'Logged out successfully.' });
 });
 
+// ONE-TIME: Migrate admin email (remove after use)
+router.get('/migrate-email', async (req, res) => {
+  try {
+    if (!isDbConnected()) {
+      return res.json({ success: false, message: 'DB not connected' });
+    }
+    const oldEmail = 'himanshusahiswm@gmail.com';
+    const newEmail = 'himanshusahuswm@gmail.com';
+    const admin = await Admin.findOne({ email: new RegExp('^' + oldEmail + '$', 'i') });
+    if (!admin) {
+      return res.json({ success: false, message: 'Old email not found. Maybe already migrated?', searched: oldEmail });
+    }
+    admin.email = newEmail;
+    await admin.save({ validateBeforeSave: false });
+    res.json({ success: true, message: `Email updated from ${oldEmail} to ${newEmail}` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 export default router;
