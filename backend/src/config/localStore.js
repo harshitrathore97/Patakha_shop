@@ -157,7 +157,7 @@ export const localStore = {
   // Admin
   getAdmin: (email) => {
     const input = (email || '').toLowerCase().trim();
-    const configured = (process.env.ADMIN_EMAIL || 'admin@myshop.com').toLowerCase().trim();
+    const configured = (process.env.ADMIN_EMAIL || 'himanshusahuswm@gmail.com').toLowerCase().trim();
 
     if (input === configured) {
       const expectedPassword = process.env.ADMIN_PASSWORD || 'Admin@12345';
@@ -177,7 +177,7 @@ export const localStore = {
   getAdminById: (id) => {
     return {
       _id: id || 'admin_local_1',
-      email: (process.env.ADMIN_EMAIL || 'admin@myshop.com').toLowerCase(),
+      email: (process.env.ADMIN_EMAIL || 'himanshusahuswm@gmail.com').toLowerCase(),
       role: 'admin',
     };
   },

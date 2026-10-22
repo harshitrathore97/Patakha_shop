@@ -77,7 +77,7 @@ async function seed() {
     console.log('✅ Connected to MongoDB Atlas');
 
     // Admin
-    const email = process.env.ADMIN_EMAIL || 'admin@myshop.com';
+    const email = process.env.ADMIN_EMAIL || 'himanshusahuswm@gmail.com';
     const password = process.env.ADMIN_PASSWORD || 'Admin@12345';
     const adminCount = await Admin.countDocuments();
     if (adminCount === 0) {

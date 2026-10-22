@@ -25,7 +25,7 @@ export const connectDB = async () => {
       
       const adminCount = await Admin.countDocuments();
       if (adminCount === 0) {
-        const defaultEmail = process.env.ADMIN_EMAIL || 'admin@myshop.com';
+        const defaultEmail = process.env.ADMIN_EMAIL || 'himanshusahuswm@gmail.com';
         const defaultPassword = process.env.ADMIN_PASSWORD || 'Admin@12345';
         const admin = new Admin({ email: defaultEmail, password: defaultPassword });
         await admin.save();

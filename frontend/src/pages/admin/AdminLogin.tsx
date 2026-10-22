@@ -88,7 +88,7 @@ const AdminLogin: React.FC = () => {
                   id="admin-email"
                   type="email"
                   className={`form-control ${errors.email ? 'error' : ''}`}
-                  placeholder="admin@myshop.com"
+                  placeholder="himanshusahuswm@gmail.com"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: '' })); }}
                   autoComplete="email"
